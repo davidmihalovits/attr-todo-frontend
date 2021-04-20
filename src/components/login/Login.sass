@@ -1,0 +1,52 @@
+@import "../../App"
+
+.login-container
+    margin: 20px
+
+    .login-title 
+        font-size: 46px
+        font-weight: 700
+
+    .login-form
+        .login-input
+            width: 100%
+            margin-top: 15px
+            padding: 10px
+            outline: none
+            border: 1px solid black
+
+            &:focus
+                border: 1px solid $primary-color
+                color: $primary-color
+
+        .login-button
+            width: 100%
+            background-color: $primary-color
+            color: white
+            font-size: 20px
+            border: none
+            margin-top: 15px
+            height: 50px
+            transition: 0.3s
+            cursor: pointer
+
+            &:hover
+                transition: 0.3s
+                background-color: black
+
+            &:disabled 
+                background-color: #d1d1d1
+                cursor: not-allowed
+
+        .login-error
+            color: red
+            position: absolute
+            margin-top: 15px
+
+        .login-link-tosignup
+            text-decoration: underline
+            color: black
+            display: inline-block
+            margin-top: 50px
+                
+    
