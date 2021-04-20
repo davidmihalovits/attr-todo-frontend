@@ -1,0 +1,64 @@
+@import "../../App"
+
+.addusermodal-container
+    background-color: white
+    position: fixed
+    z-index: 2
+    left: 10%
+    right: 10%
+    top: 10%
+    border: none
+    box-shadow: 1px 1px 6px 0 #c5c5c5
+    overflow: auto
+    padding: 10px
+
+    .addusermodal-title-close
+        display: grid
+        grid-template-columns: 1fr 20px
+
+        .addusermodal-title
+            font-size: 36px
+            font-weight: 700
+
+        .addusermodal-close
+            width: 20px
+            height: 20px
+
+    .addusermodal-form
+        .addusermodal-input
+            width: 100%
+            margin-top: 15px
+            padding: 10px
+            outline: none
+            border: 1px solid black
+
+            &:focus
+                border: 1px solid $primary-color
+                color: $primary-color
+
+        .addusermodal-button
+            width: 100%
+            background-color: $primary-color
+            color: white
+            font-size: 20px
+            border: none
+            margin-top: 15px
+            height: 50px
+            transition: 0.3s
+            cursor: pointer
+
+            &:hover
+                transition: 0.3s
+                background-color: black
+
+            &:disabled 
+                background-color: #d1d1d1
+                cursor: not-allowed
+
+        .addusermodal-error
+            color: red
+            margin-top: 15px
+            
+        .addusermodal-success
+            color: green
+            margin-top: 15px

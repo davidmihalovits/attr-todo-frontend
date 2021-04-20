@@ -1,0 +1,76 @@
+@import "../../App"
+
+.modal-open
+    overflow: hidden
+
+.dashboard-container
+    .dashboard-navbar
+        border-bottom: 1px solid #f1f1f1
+        padding: 20px
+        display: grid
+        grid-template-columns: 1fr 1fr
+        position: fixed
+        width: 100%
+        top: 0
+        background-color: white
+
+        .dashboard-navbar-adduser
+            color: $primary-color
+            border: 1px solid $primary-color
+            background-color: white
+            font-weight: 700
+            font-size: 14px
+            cursor: pointer
+            transition: 0.4s
+            width: 120px
+            height: 30px
+
+            &:hover
+                background-color: $primary-color
+                transition: 0.4s
+                color: white
+
+        .dashboard-navbar-logout
+            color: $primary-color
+            border: 1px solid $primary-color
+            background-color: white
+            font-weight: 700
+            font-size: 14px
+            cursor: pointer
+            transition: 0.4s
+            width: 120px
+            height: 30px
+            justify-self: end
+
+            &:hover
+                background-color: $primary-color
+                transition: 0.4s
+                color: white
+
+    .dashboard-users
+        margin: 90px 20px 20px 20px
+        display: grid
+        grid-template-columns: 1fr 1fr
+        gap: 20px
+
+        .dashboard-user-card
+            padding: 10px
+            text-align: center
+            background-color: #f8f8f8
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            .dashboard-image
+                width: 80px
+                height: 80px
+
+            .dashboard-username
+                margin-top: 10px
+                font-weight: 700
+                font-size: 18px
+                text-overflow: ellipsis;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                
