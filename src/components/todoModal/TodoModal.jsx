@@ -1,116 +1,275 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { storage } from "../../firebase";
 import "./TodoModal.sass";
 import close from "../../assets/close.svg";
+import noImg from "../../assets/noImg.png";
+import deleteTodoSvg from "../../assets/delete.svg";
+
+// edit todo
 
 const TodoModal = (props) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [todos, setTodos] = useState([]);
+    const [user, setUser] = useState(props.user);
+    const [todo, setTodo] = useState("");
+    const [todoTextArea, setTodoTextArea] = useState(false);
+    const [editUser, setEditUser] = useState(false);
+    const [newUsername, setNewUsername] = useState("");
 
-    const addUser = (e) => {
-        e.preventDefault();
-
-        setLoading(true);
-
+    const getTodos = () => {
         const token = localStorage.getItem("token");
 
         if (token) {
-            fetch("http://localhost:5000/addUser", {
-                method: "POST",
+            fetch(`http://localhost:5000/getTodos/${props.user.id}`, {
+                method: "GET",
                 headers: {
-                    "Content-Type": "application/json",
                     token: token,
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then((res) => setTodos(res));
+        }
+    };
+
+    useEffect(() => {
+        getTodos();
+        // eslint-disable-next-line
+    }, []);
+
+    const updateUser = (u) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            fetch(`http://localhost:5000/updateUser/${props.user.id}`, {
+                method: "PUT",
+                headers: {
+                    token: token,
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username,
-                    password,
+                    image: u,
+                    username: newUsername,
                 }),
             })
                 .then((res) => res.json())
-                .then((res) => {
-                    if (
-                        res.status === "Enter a username." ||
-                        "Password must be at least 6 characters." ||
-                        "Username already taken."
-                    ) {
-                        setError(res.status);
-                        setLoading(false);
-                    }
-                    if (res.newUser) {
-                        setLoading(false);
-                        setError("");
-                        props.setAddUserModal(false);
-                        props.setUsers((oldUsersArray) => [
-                            res.newUser,
-                            ...oldUsersArray,
-                        ]);
-                    }
+                .then((res) =>
+                    props.users.map((user) => {
+                        if (props.user.id === res.user.id) {
+                            var data = [...props.users];
+                            var index = data.findIndex(
+                                (obj) => obj.id === props.user.id
+                            );
+                            data[index] = res.user;
+                            props.setUsers(data);
+                            setUser(res.user);
+                            setEditUser(false);
+                        }
+                        return user;
+                    })
+                );
+        }
+    };
+
+    const imageOnChange = (e) => {
+        const image = e.target.files[0];
+
+        const uploadTask = storage.ref(`images/${image.name}`).put(image);
+
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {},
+            (error) => {
+                console.log(error);
+            },
+            () => {
+                storage
+                    .ref("images")
+                    .child(image.name)
+                    .getDownloadURL()
+                    .then((url) => {
+                        const u = url;
+                        updateUser(u);
+                    });
+            }
+        );
+    };
+
+    const deleteTodo = (id) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            fetch(`http://localhost:5000/deleteTodo/${id}`, {
+                method: "DELETE",
+                headers: {
+                    token: token,
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then(() => {
+                    let filteredArray = todos.filter((todo) => todo.id !== id);
+                    setTodos(filteredArray);
                 });
         }
     };
 
-    /*const useOnClick = (ref, handler) => {
-        useEffect(() => {
-            const listener = (event) => {
-                if (!ref.current || ref.current.contains(event.target)) {
-                    return;
-                }
-                handler(event);
-            };
-            document.addEventListener("mousedown", listener);
-            return () => {
-                document.removeEventListener("mousedown", listener);
-            };
-            // eslint-disable-next-line
-        }, []);
-    };
-    const ref = useRef();
-    useOnClick(ref, () => {
-        props.setAddUserModal(false);
-    });*/
+    const deleteUser = () => {
+        const token = localStorage.getItem("token");
 
-    const disabled = username.length === 0 || password.length === 0 || loading;
+        if (token) {
+            fetch(`http://localhost:5000/deleteUser/${user.id}`, {
+                method: "DELETE",
+                headers: {
+                    token: token,
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => res.json())
+                .then(() => {
+                    props.setTodoModal(false);
+                    let filteredArray = props.users.filter(
+                        (u) => u.id !== user.id
+                    );
+                    props.setUsers(filteredArray);
+                });
+        }
+    };
+
+    const addTodo = () => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            fetch(`http://localhost:5000/addTodo`, {
+                method: "POST",
+                headers: {
+                    token: token,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    todo: todo,
+                    userid: user.id,
+                }),
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    setTodos((oldTodosArray) => [res, ...oldTodosArray]);
+                    setTodo("");
+                });
+        }
+    };
 
     return (
-        <div className="addusermodal-container">
-            <div className="addusermodal-title-close">
-                <h1 className="addusermodal-title">Add User</h1>
+        <div className="todomodal-container">
+            <div className="todomodal-close-container">
                 <img
                     src={close}
                     alt="close"
-                    className="addusermodal-close"
-                    onClick={() => props.setAddUserModal(false)}
+                    className="todomodal-close"
+                    onClick={() => props.setTodoModal(false)}
                 />
             </div>
-            <form className="addusermodal-form" onSubmit={addUser} noValidate>
+            <div className="todomodal-image-username">
                 <input
-                    placeholder="Username"
-                    id="username"
-                    name="username"
-                    type="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="addusermodal-input"
+                    style={{ display: "none" }}
+                    name="image"
+                    id="image"
+                    type="file"
+                    accept=".jpg, .png, .jpeg"
+                    value={""}
+                    onChange={imageOnChange}
                 />
-                <input
-                    placeholder="Password"
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="addusermodal-input"
-                />
+                <label className="todomodal-label" htmlFor="image">
+                    {!user.image ? (
+                        <img
+                            src={noImg}
+                            alt="no-profile-pic"
+                            className="todomodal-image"
+                        />
+                    ) : (
+                        <img
+                            src={user.image}
+                            alt="profile-pic"
+                            className="todomodal-image"
+                        />
+                    )}
+                </label>
+                {editUser ? (
+                    <input
+                        placeholder="Username"
+                        id="username"
+                        name="username"
+                        type="username"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value)}
+                        className="todomodal-input"
+                    />
+                ) : (
+                    <p className="todomodal-username">{user.username}</p>
+                )}
+            </div>
+            <div className="todomodal-buttons">
                 <button
-                    type="submit"
-                    disabled={disabled}
-                    className="addusermodal-button"
+                    className="todomodal-button-delete"
+                    onClick={() => deleteUser()}
                 >
-                    {loading ? "Loading..." : "Add User"}
+                    Delete
                 </button>
-                {error && <p className="addusermodal-error">{error}</p>}
-            </form>
+                {editUser ? (
+                    <button
+                        className="todomodal-button-finish"
+                        onClick={() => updateUser()}
+                    >
+                        Finish
+                    </button>
+                ) : (
+                    <button
+                        className="todomodal-button-edit"
+                        onClick={() => setEditUser(true)}
+                    >
+                        Edit
+                    </button>
+                )}
+            </div>
+            <hr className="todomodal-line" />
+            <button
+                className="todomodal-button-addtodo"
+                onClick={() => setTodoTextArea(!todoTextArea)}
+            >
+                Add Todo
+            </button>
+            {todoTextArea && (
+                <div className="todomodal-textarea-send">
+                    <textarea
+                        id="addtodo"
+                        name="addtodo"
+                        type="text"
+                        value={todo}
+                        onChange={(e) => setTodo(e.target.value)}
+                        className="todomodal-textarea"
+                    />
+                    <button
+                        className="todomodal-send"
+                        onClick={() => addTodo()}
+                        disabled={!todo}
+                    >
+                        ADD
+                    </button>
+                </div>
+            )}
+            <div className="todomodal-todos">
+                {todos &&
+                    todos.map((todo, key) => (
+                        <div className="todomodal-todo-delete" key={key}>
+                            <p className="todomodal-todo">{todo.todo}</p>
+                            <img
+                                src={deleteTodoSvg}
+                                alt="delete-todo"
+                                className="todomodal-delete"
+                                onClick={() => deleteTodo(todo.id)}
+                            />
+                        </div>
+                    ))}
+            </div>
         </div>
     );
 };

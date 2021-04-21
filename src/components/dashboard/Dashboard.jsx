@@ -7,6 +7,7 @@ import TodoModal from "../todoModal/TodoModal";
 
 const Dashboard = () => {
     const [users, setUsers] = useState([]);
+    const [user, setUser] = useState(null);
     const [addUserModal, setAddUserModal] = useState(false);
     const [todoModal, setTodoModal] = useState(false);
 
@@ -40,7 +41,15 @@ const Dashboard = () => {
                         setAddUserModal={setAddUserModal}
                     />
                 )}
-                {todoModal && <TodoModal />}
+                {todoModal && (
+                    <TodoModal
+                        setTodoModal={setTodoModal}
+                        user={user}
+                        setUser={setUser}
+                        users={users}
+                        setUsers={setUsers}
+                    />
+                )}
             </StrictMode>,
             document.getElementById("modal")
         );
@@ -57,6 +66,12 @@ const Dashboard = () => {
         document.getElementById("root").style.pointerEvents = "auto";
     }
 
+    const openTodoModal = (user) => {
+        setTodoModal(true);
+
+        setUser(user);
+    };
+
     const logout = () => {
         localStorage.removeItem("token");
         window.location.reload();
@@ -64,43 +79,48 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <div className="dashboard-navbar">
-                <button
-                    className="dashboard-navbar-adduser"
-                    onClick={() => setAddUserModal(true)}
-                >
-                    Add User
-                </button>
-                <button
-                    className="dashboard-navbar-logout"
-                    onClick={() => logout()}
-                >
-                    Logout
-                </button>
+            <div className="dashboard-navbar-container">
+                <div className="dashboard-navbar">
+                    <button
+                        className="dashboard-navbar-adduser"
+                        onClick={() => setAddUserModal(true)}
+                    >
+                        Add User
+                    </button>
+                    <button
+                        className="dashboard-navbar-logout"
+                        onClick={() => logout()}
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
             <div className="dashboard-users">
-                {users.map((user, key) => (
-                    <div
-                        className="dashboard-user-card"
-                        key={key}
-                        onClick={() => setTodoModal(true)}
-                    >
-                        {!user.image ? (
-                            <img
-                                src={noImg}
-                                alt="no-profile-pic"
-                                className="dashboard-image"
-                            />
-                        ) : (
-                            <img
-                                src={user.image}
-                                alt="profile-pic"
-                                className="dashboard-image"
-                            />
-                        )}
-                        <p className="dashboard-username">{user.username}</p>
-                    </div>
-                ))}
+                {users &&
+                    users.map((user, key) => (
+                        <div
+                            className="dashboard-user-card"
+                            key={key}
+                            onClick={() => openTodoModal(user)}
+                        >
+                            {!user.image ? (
+                                <img
+                                    src={noImg}
+                                    alt="no-profile-pic"
+                                    className="dashboard-image"
+                                />
+                            ) : (
+                                <img
+                                    src={user.image}
+                                    alt="profile-pic"
+                                    className="dashboard-image"
+                                />
+                            )}
+                            <p className="dashboard-username">
+                                {user.username}
+                            </p>
+                        </div>
+                    ))}
             </div>
         </div>
     );

@@ -4,48 +4,50 @@
     overflow: hidden
 
 .dashboard-container
-    .dashboard-navbar
+    .dashboard-navbar-container
         border-bottom: 1px solid #f1f1f1
-        padding: 20px
-        display: grid
-        grid-template-columns: 1fr 1fr
         position: fixed
         width: 100%
         top: 0
-        background-color: white
 
-        .dashboard-navbar-adduser
-            color: $primary-color
-            border: 1px solid $primary-color
+        .dashboard-navbar
+            padding: 20px
+            display: grid
+            grid-template-columns: 1fr 1fr
             background-color: white
-            font-weight: 700
-            font-size: 14px
-            cursor: pointer
-            transition: 0.4s
-            width: 120px
-            height: 30px
 
-            &:hover
-                background-color: $primary-color
+            .dashboard-navbar-adduser
+                color: $primary-color
+                border: 1px solid $primary-color
+                background-color: white
+                font-weight: 700
+                font-size: 14px
+                cursor: pointer
                 transition: 0.4s
-                color: white
+                width: 120px
+                height: 30px
 
-        .dashboard-navbar-logout
-            color: $primary-color
-            border: 1px solid $primary-color
-            background-color: white
-            font-weight: 700
-            font-size: 14px
-            cursor: pointer
-            transition: 0.4s
-            width: 120px
-            height: 30px
-            justify-self: end
+                &:hover
+                    background-color: $primary-color
+                    transition: 0.4s
+                    color: white
 
-            &:hover
-                background-color: $primary-color
+            .dashboard-navbar-logout
+                color: $primary-color
+                border: 1px solid $primary-color
+                background-color: white
+                font-weight: 700
+                font-size: 14px
+                cursor: pointer
                 transition: 0.4s
-                color: white
+                width: 120px
+                height: 30px
+                justify-self: end
+
+                &:hover
+                    background-color: $primary-color
+                    transition: 0.4s
+                    color: white
 
     .dashboard-users
         margin: 90px 20px 20px 20px
@@ -57,20 +59,31 @@
             padding: 10px
             text-align: center
             background-color: #f8f8f8
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow: hidden
+            cursor: pointer
 
             .dashboard-image
                 width: 80px
                 height: 80px
+                object-fit: cover
 
             .dashboard-username
                 margin-top: 10px
                 font-weight: 700
                 font-size: 18px
-                text-overflow: ellipsis;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                text-overflow: ellipsis
+                overflow: hidden
+
+@media only screen and (min-width: 768px)
+    .dashboard-container
+        .dashboard-navbar-container
+            .dashboard-navbar
+                padding: 20px 0
+                width: 700px
+                margin: 0 auto
+
+        .dashboard-users
+            width: 700px
+            margin: 90px auto 20px auto
+            
                 

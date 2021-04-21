@@ -50,26 +50,6 @@ const AddUserModal = (props) => {
         }
     };
 
-    /*const useOnClick = (ref, handler) => {
-        useEffect(() => {
-            const listener = (event) => {
-                if (!ref.current || ref.current.contains(event.target)) {
-                    return;
-                }
-                handler(event);
-            };
-            document.addEventListener("mousedown", listener);
-            return () => {
-                document.removeEventListener("mousedown", listener);
-            };
-            // eslint-disable-next-line
-        }, []);
-    };
-    const ref = useRef();
-    useOnClick(ref, () => {
-        props.setAddUserModal(false);
-    });*/
-
     const disabled = username.length === 0 || password.length === 0 || loading;
 
     return (
